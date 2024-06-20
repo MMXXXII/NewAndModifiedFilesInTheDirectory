@@ -58,6 +58,16 @@ unordered_map<string, time_t> scan_directory(const string& directory) {
     return file_info;
 }
 
+// Функция для отображения нового списка файлов
+void display_files(const vector<string>& files, const string& header) {
+    cout << header << ":\n";
+    for (const auto& file : files) {
+        cout << file << " (detected at " << current_time_str() << ")\n";
+    }
+    cout << endl;
+}
+
+// Основная функция
 int main() {
     setlocale(LC_ALL, "ru");
     const string directory_to_scan = R"(C:\Users\PC\Desktop\Тест)";
@@ -72,6 +82,7 @@ int main() {
     // Сравнение и формирование списка новых и обновленных файлов
     vector<string> new_files;
     vector<string> updated_files;
+    vector<string> unchanged_files;
 
     for (const auto& entry : current_registry) {
         auto it = previous_registry.find(entry.first);
@@ -81,21 +92,39 @@ int main() {
         else if (it->second != entry.second) {
             updated_files.push_back(entry.first);
         }
+        else {
+            unchanged_files.push_back(entry.first);
+        }
     }
 
-    // Вывод информации о новых и обновленных файлах
-    cout << "New files:\n";
-    for (const auto& file : new_files) {
-        cout << file << " (detected at " << current_time_str() << ")\n";
-    }
+    while (true) {
+        cout << "Menu:\n";
+        cout << "1. Show new files\n";
+        cout << "2. Show updated files\n";
+        cout << "3. Show unchanged files\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        int choice;
+        cin >> choice;
 
-    cout << "\nUpdated files:\n";
-    for (const auto& file : updated_files) {
-        cout << file << " (detected at " << current_time_str() << ")\n";
+        switch (choice) {
+        case 1:
+            display_files(new_files, "New files");
+            break;
+        case 2:
+            display_files(updated_files, "Updated files");
+            break;
+        case 3:
+            display_files(unchanged_files, "Unchanged files");
+            break;
+        case 4:
+            save_registry(registry_filename, current_registry);
+            cout << "Exiting...\n";
+            return 0;
+        default:
+            cout << "Invalid choice, please try again.\n";
+        }
     }
-
-    // Сохранение текущего состояния в файл реестра
-    save_registry(registry_filename, current_registry);
 
     return 0;
 }
