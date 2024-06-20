@@ -8,81 +8,72 @@
 #include <sstream>
 
 namespace fs = std::filesystem;
-using namespace std;
 
 // Функция для получения текущего времени в виде строки
-string current_time_str() {
-    time_t now = chrono::system_clock::to_time_t(chrono::system_clock::now());
+std::string current_time_str() {
+    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     char buf[100] = { 0 };
     struct tm timeinfo;
     localtime_s(&timeinfo, &now);
-    strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &timeinfo);
-    return string(buf);
+    std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &timeinfo);
+    return std::string(buf);
 }
 
 // Функция для загрузки информации о файлах из файла реестра
-unordered_map<string, time_t> load_registry(const string& filename) {
-    unordered_map<string, time_t> registry;
-    ifstream infile(filename);
-    string line;
-    while (getline(infile, line)) {
-        stringstream ss(line);
-        string path;
-        string time_str;
-        if (getline(ss, path, ',') && getline(ss, time_str)) {
-            registry[path] = stoll(time_str);
+std::unordered_map<std::string, std::time_t> load_registry(const std::string& filename) {
+    std::unordered_map<std::string, std::time_t> registry;
+    std::ifstream infile(filename);
+    std::string line;
+    while (std::getline(infile, line)) {
+        std::stringstream ss(line);
+        std::string path;
+        std::string time_str;
+        if (std::getline(ss, path, ',') && std::getline(ss, time_str)) {
+            registry[path] = std::stoll(time_str);
         }
     }
     return registry;
 }
 
 // Функция для сохранения информации о файлах в файл реестра
-void save_registry(const string& filename, const unordered_map<string, time_t>& registry) {
-    ofstream outfile(filename);
+void save_registry(const std::string& filename, const std::unordered_map<std::string, std::time_t>& registry) {
+    std::ofstream outfile(filename);
     for (const auto& entry : registry) {
-        outfile << entry.first << "," << entry.second << endl;
+        outfile << entry.first << "," << entry.second << std::endl;
     }
 }
 
 // Функция для сканирования каталога и получения информации о файлах
-unordered_map<string, time_t> scan_directory(const string& directory) {
-    unordered_map<string, time_t> file_info;
+std::unordered_map<std::string, std::time_t> scan_directory(const std::string& directory) {
+    std::unordered_map<std::string, std::time_t> file_info;
     for (const auto& entry : fs::recursive_directory_iterator(directory)) {
         if (fs::is_regular_file(entry.path())) {
             auto ftime = fs::last_write_time(entry.path());
-            auto sctp = chrono::time_point_cast<chrono::system_clock::duration>(ftime - decltype(ftime)::clock::now() + chrono::system_clock::now());
-            time_t cftime = chrono::system_clock::to_time_t(sctp);
+            auto sctp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(ftime - decltype(ftime)::clock::now()
+                + std::chrono::system_clock::now());
+            std::time_t cftime = std::chrono::system_clock::to_time_t(sctp);
             file_info[entry.path().string()] = cftime;
         }
     }
     return file_info;
 }
 
-// Функция для отображения нового списка файлов
-void display_files(const vector<string>& files, const string& header) {
-    cout << header << ":\n";
-    for (const auto& file : files) {
-        cout << file << " (detected at " << current_time_str() << ")\n";
-    }
-    cout << endl;
-}
-
-// Основная функция
 int main() {
-    setlocale(LC_ALL, "ru");
-    const string directory_to_scan = R"(C:\Users\PC\Desktop\Тест)";
-    const string registry_filename = "file_registry.txt";
+    setlocale(LC_ALL, "ru");  // Устанавливаем русскую локаль для корректного вывода
+    using namespace std;      // Используем пространство имен std
+
+    const std::string directory_to_scan = R"(C:\Users\PC\Desktop\Тест)";
+    const std::string registry_filename = "file_registry.txt";
 
     // Загрузка предыдущего состояния реестра
-    unordered_map<string, time_t> previous_registry = load_registry(registry_filename);
+    std::unordered_map<std::string, std::time_t> previous_registry = load_registry(registry_filename);
 
     // Сканирование текущего состояния каталога
-    unordered_map<string, time_t> current_registry = scan_directory(directory_to_scan);
+    std::unordered_map<std::string, std::time_t> current_registry = scan_directory(directory_to_scan);
 
     // Сравнение и формирование списка новых и обновленных файлов
-    vector<string> new_files;
-    vector<string> updated_files;
-    vector<string> unchanged_files;
+    std::vector<std::string> new_files;
+    std::vector<std::string> updated_files;
 
     for (const auto& entry : current_registry) {
         auto it = previous_registry.find(entry.first);
@@ -92,39 +83,21 @@ int main() {
         else if (it->second != entry.second) {
             updated_files.push_back(entry.first);
         }
-        else {
-            unchanged_files.push_back(entry.first);
-        }
     }
 
-    while (true) {
-        cout << "Menu:\n";
-        cout << "1. Show new files\n";
-        cout << "2. Show updated files\n";
-        cout << "3. Show unchanged files\n";
-        cout << "4. Exit\n";
-        cout << "Enter your choice: ";
-        int choice;
-        cin >> choice;
-
-        switch (choice) {
-        case 1:
-            display_files(new_files, "New files");
-            break;
-        case 2:
-            display_files(updated_files, "Updated files");
-            break;
-        case 3:
-            display_files(unchanged_files, "Unchanged files");
-            break;
-        case 4:
-            save_registry(registry_filename, current_registry);
-            cout << "Exiting...\n";
-            return 0;
-        default:
-            cout << "Invalid choice, please try again.\n";
-        }
+    // Вывод информации о новых и обновленных файлах
+    cout << "Новые файлы:\n";
+    for (const auto& file : new_files) {
+        cout << file << " (обнаружен в " << current_time_str() << ")\n";
     }
+
+    cout << "\nОбновленные файлы:\n";
+    for (const auto& file : updated_files) {
+        cout << file << " (обнаружен в " << current_time_str() << ")\n";
+    }
+
+    // Сохранение текущего состояния в файл реестра
+    save_registry(registry_filename, current_registry);
 
     return 0;
 }
