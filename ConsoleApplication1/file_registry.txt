@@ -1,10 +1,6 @@
-C:\Users\PC\Desktop\Тест\Архив WinRAR (2).rar,2024-06-20 23:57:52
-C:\Users\PC\Desktop\Тест\2.txt,2024-06-20 23:58:20
-C:\Users\PC\Desktop\Тест\Архив WinRAR.rar,2024-06-20 23:46:26
-C:\Users\PC\Desktop\Тест\Новый текстовый документ (3).txt,2024-06-20 23:58:16
-C:\Users\PC\Desktop\Тест\Новая папка\1\1.txt,2024-06-20 23:45:13
-C:\Users\PC\Desktop\Тест\Новая папка\1\1.rtf,2024-06-20 23:45:17
-C:\Users\PC\Desktop\Тест\Новая папка\1.2.rar,2024-06-20 23:45:29
-C:\Users\PC\Desktop\Тест\Новая папка\1.1.txt,2024-06-20 23:58:29
-C:\Users\PC\Desktop\Тест\Новый текстовый документ (2).txt,2024-06-20 23:58:13
-C:\Users\PC\Desktop\Тест\Новый текстовый документ.txt,2024-06-20 23:46:16
+C:\Users\PC\Desktop\Тест\Документ Microsoft Word.docx,2024-06-21 10:48:18
+C:\Users\PC\Desktop\Тест\Лист Microsoft Excel.xlsx,2024-06-21 10:48:23
+C:\Users\PC\Desktop\Тест\Новая папка\Microsoft Project Document.mpp,2024-06-21 10:49:12
+C:\Users\PC\Desktop\Тест\Новая папка\Новый точечный рисунок.bmp,2024-06-21 10:49:06
+C:\Users\PC\Desktop\Тест\Новая папка\Презентация Microsoft PowerPoint.pptx,2024-06-21 10:49:21
+C:\Users\PC\Desktop\Тест\Новый текстовый документ.txt,2024-06-21 10:48:56
