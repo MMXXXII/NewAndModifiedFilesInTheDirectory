@@ -13,8 +13,7 @@
 #include <iomanip> //Эта библиотека используется для манипуляции вводом-выводом, таких как установка точности вывода значений.
 #include <windows.h>
 
-namespace fs = filesystem;
-using namespace fs;
+namespace fs = std::filesystem;
 using namespace std;
 
 // Функция для преобразования time_t в строку
